@@ -22,7 +22,6 @@ export default function Book() {
     return (
         <main className="flex min-h-screen items-start justify-start gap-10 p-12">
             <Document
-            
                 file="/pdf/marketing.pdf"
                 onLoadSuccess={onDocumentLoadSuccess}
                 onLoadError={onDocumentLoadError} // Добавляем обработчик ошибок
