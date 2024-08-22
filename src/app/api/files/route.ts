@@ -4,11 +4,25 @@ import fs from "fs";
 import path from "path";
 import prisma from "@/lib/prisma";
 
+export async function GET(req: NextRequest) {
+    try {
+        const files = await prisma.pdfFile.findMany();
+        return NextResponse.json(files);
+    } catch (error: any) {
+        console.error("Ошибка получения файлов:", error.message, error.stack);
+        return NextResponse.json(
+            { message: "Ошибка получения файлов" },
+            { status: 500 }
+        );
+    }
+}
+
 export async function POST(req: NextRequest) {
     const id = Date.now();
     try {
         const formData = await req.formData();
         const file = formData.get("file");
+        const title = formData.get("title") as string;
 
         if (!file || !(file instanceof File)) {
             return NextResponse.json(
@@ -17,9 +31,16 @@ export async function POST(req: NextRequest) {
             );
         }
 
+        if (!title) {
+            return NextResponse.json(
+                { message: "Заголовок не указан" },
+                { status: 400 }
+            );
+        }
+
         const fileName =
             path.parse(file.name).name + "_" + id + path.extname(file.name);
-        const filePath = path.join(process.cwd(), "src/files", fileName);
+        const filePath = path.join(process.cwd(), "public/pdf", fileName);
 
         // Создание папки, если она не существует
         const dirPath = path.dirname(filePath);
@@ -34,8 +55,8 @@ export async function POST(req: NextRequest) {
         // Запись информации о файле в базу данных
         const savedFile = await prisma.pdfFile.create({
             data: {
-                name: fileName,
-                path: filePath,
+                name: title,
+                path: fileName,
             },
         });
 

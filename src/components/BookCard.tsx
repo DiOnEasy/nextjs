@@ -2,7 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 // import styles from "../styles/BookCard.module.css";
 
-const BookCard = () => (
+type BookCardProps = {
+    id: string;
+    name: string;
+    path: string;
+};
+
+const BookCard = ({ name, path, id }: BookCardProps) => (
     <div className="p-10 bg-gray radius-1 rounded-xl flex items-center justify-center flex-col">
         <Image
             width={60}
@@ -13,9 +19,10 @@ const BookCard = () => (
             alt=""
             className=""
         />
-        <h2 className="text-2xl">Title</h2>
-        <p className="text-lg">Author: authot</p>
-        <Link className="text-blue" href={`/book/1`}>View Details</Link>
+        <h2 className="text-2xl">{name}</h2>
+        <Link className="text-blue" href={`/book/${id}`}>
+            View Details
+        </Link>
     </div>
 );
 
